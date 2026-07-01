@@ -252,7 +252,7 @@
                     <i class="fa-solid fa-envelope"></i>
                     <div class="contact-text">
                         <span>Email</span>
-                        <strong>Cool@coolmate.me</strong>
+                        <strong>support@coolmate.me</strong>
                     </div>
                 </div>
             </div>
@@ -272,7 +272,7 @@
             <div class="footer-col">
                 <h3 class="footer-title">CHÍNH SÁCH</h3>
                 <ul class="footer-links">
-                    <li><a href="#">Chính sách đổi trả 60 ngày</a></li>
+                    <li><a href="#">Chính sách đổi trả 30 ngày</a></li>
                     <li><a href="#">Chính sách khuyến mãi</a></li>
                     <li><a href="#">Chính sách bảo mật</a></li>
                     <li><a href="#">Chính sách giao hàng</a></li>
