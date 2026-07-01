@@ -24,7 +24,7 @@
     <div class="container-fluid px-lg-5">
         <a class="navbar-brand me-4" href="/web_qlsp/home">
 <div class="logo-coolmate-tech">
-  COOLMATE<span class="dot">.</span>
+  Duy__COOLMATE<span class="dot">.</span>
 </div>     </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
