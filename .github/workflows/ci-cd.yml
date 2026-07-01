@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ "main", "master", "develop" ]
+    branches: [ "main", "develop" ]
   pull_request:
-    branches: [ "main", "master", "develop" ]
+    branches: [ "main", "develop" ]
 
 jobs:
   lint-and-test:
@@ -39,14 +39,32 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          push: false # Đặt thành true khi đã cấu hình Docker Hub
+          push: false
           tags: web-qlsp:latest
 
   deploy:
     needs: build-docker
-    runs-on: ubuntu-latest
+    # Chạy trực tiếp trên máy chủ Ubuntu (Self-hosted Runner)
+    runs-on: self-hosted
+    # Chỉ deploy khi push vào nhánh main
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
     steps:
-      - name: Trigger Render Deploy Hook
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Pull latest code
         run: |
-          curl -f -sX GET "${{ secrets.RENDER_DEPLOY_HOOK }}"
+          cd $HOME/cicd_docker
+          git pull origin main
+
+      - name: Deploy with Docker Compose
+        run: |
+          cd $HOME/cicd_docker
+          docker compose up -d --build
+          docker image prune -f
+
+      - name: Verify deployment
+        run: |
+          sleep 5
+          docker ps | grep web_qlsp_app && echo "✅ Container is running!" || echo "❌ Container not found!"
