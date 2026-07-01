@@ -2,6 +2,7 @@
 class reviews extends controllers {
     private $review;
     
+    // Khởi tạo controller và load model đánh giá, đồng thời xử lý API dành cho khách hàng.
     function __construct() {
         $current_uri = $_SERVER['REQUEST_URI'];
 
@@ -24,17 +25,20 @@ class reviews extends controllers {
         $this->review = $this->model('reviews_m');
     }
     
+    // Hiển thị giao diện quản lý đánh giá.
     function Get_data() {
         $this->view('Master', [
             'Page' => 'reviews_v' 
         ]);
     }
 
+    // Thiết lập header trả về dữ liệu JSON cho API.
     private function setApiHeader() {
         header('Access-Control-Allow-Origin: *');
         header('Content-Type: application/json; charset=utf-8');
     }
 
+    // Lấy danh sách đánh giá theo sản phẩm.
     function api_get_by_product() {
         $this->setApiHeader();
         $product_id = isset($_GET['product_id']) ? intval($_GET['product_id']) : 0;
@@ -50,6 +54,7 @@ class reviews extends controllers {
         exit;
     }
 
+    // Lấy toàn bộ đánh giá cho trang quản trị.
     function api_get_all() {
         $this->setApiHeader();
         $reviews_result = $this->review->reviews_selectAllAdmin();
@@ -63,6 +68,7 @@ class reviews extends controllers {
         exit;
     }
     
+    // Thêm đánh giá mới từ khách hàng đã mua hàng.
     function add() {
         $this->setApiHeader();
         if($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -94,6 +100,7 @@ class reviews extends controllers {
         exit;
     }
 
+    // Cho phép người dùng chỉnh sửa đánh giá của chính mình.
     function edit_user() {
         $this->setApiHeader();
         if (session_status() === PHP_SESSION_NONE) session_start();
@@ -124,6 +131,7 @@ class reviews extends controllers {
         exit;
     }
 
+    // Xóa đánh giá của người dùng hiện tại.
     function delete_user($id) {
         $this->setApiHeader();
         if (session_status() === PHP_SESSION_NONE) session_start();
@@ -137,6 +145,7 @@ class reviews extends controllers {
         exit;
     }
     
+    // Đổi trạng thái hiển thị của đánh giá.
     function toggle($id) {
         $this->setApiHeader();
         $kq = $this->review->reviews_toggleStatus($id);
@@ -144,6 +153,7 @@ class reviews extends controllers {
         exit;
     }
     
+    // Xóa đánh giá khỏi hệ thống.
     function delete($id) {
         $this->setApiHeader();
         $kq = $this->review->reviews_delete($id);
