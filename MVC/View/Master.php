@@ -31,11 +31,11 @@
     </div>
     
     <a href="/web_qlsp/overview" class="<?= isActive(['overview'], $currentRoute) ?>">
-        <i class="fas fa-home"></i> Overview
+        <i class="fas fa-home"></i> Tổng quan
     </a>
     
 <a href="/web_qlsp/product_list" class="<?= isActive(['product_list','product_add'], $currentRoute) ?>">
-        <i class="fas fa-tshirt"></i> Products
+        <i class="fas fa-tshirt"></i> Sản phẩm
     </a>
 
     <a href="/web_qlsp/categories_list" class="<?= isActive(['categories_list'], $currentRoute) ?>">
