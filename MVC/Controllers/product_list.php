@@ -5,26 +5,34 @@ class product_list extends controllers
 {
     private $pdlist;
 
+    // Hàm khởi tạo, gán model sản phẩm cho controller.
     public function __construct()
-    {        parent::__construct();
+    {
+        parent::__construct();
         $this->pdlist = $this->model("product_m");
     }
 
 
 
-    private function setApiHeader() {
+    // Thiết lập header cho API trả về dữ liệu JSON.
+    private function setApiHeader()
+    {
         header('Access-Control-Allow-Origin: *');
         header('Content-Type: application/json; charset=utf-8');
     }
 
-    private function create_slug($string) {
+    // Tạo slug thân thiện cho tên sản phẩm để dùng trong URL.
+    private function create_slug($string)
+    {
         $search = ['#(à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ)#', '#(è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ)#', '#(ì|í|ị|ỉ|ĩ)#', '#(ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ)#', '#(ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ)#', '#(ỳ|ý|ỵ|ỷ|ỹ)#', '#(đ)#', '#(À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ)#', '#(È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ)#', '#(Ì|Í|Ị|Ỉ|Ĩ)#', '#(Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|Ỡ)#', '#(Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ)#', '#(Ỳ|Ý|Ỵ|Ỷ|Ỹ)#', '#(Đ)#', "/[^a-zA-Z0-9\-\_]/"];
         $replace = ['a', 'e', 'i', 'o', 'u', 'y', 'd', 'A', 'E', 'I', 'O', 'U', 'Y', 'D', '-'];
         $string = preg_replace($search, $replace, $string);
         return strtolower(preg_replace('/(-)+/', '-', $string));
     }
 
-    private function download_image_from_url($url) {
+    // Tải ảnh từ URL bên ngoài và lưu vào thư mục hình ảnh của hệ thống.
+    private function download_image_from_url($url)
+    {
         if (!filter_var($url, FILTER_VALIDATE_URL)) return '';
         try {
             $imageContent = @file_get_contents($url);
@@ -43,12 +51,13 @@ class product_list extends controllers
     }
 
 
+    // Hiển thị giao diện danh sách sản phẩm.
     public function Get_data()
     {
         $this->view('Master', ['Page' => 'product_list_v']);
     }
 
-    // API: Lấy danh sách sản phẩm (Có tìm kiếm)
+    // API: Lấy danh sách sản phẩm, có thể hỗ trợ tìm kiếm theo từ khóa.
     public function api_get_data()
     {
         $this->setApiHeader();
@@ -77,7 +86,7 @@ class product_list extends controllers
         exit;
     }
 
-    // API: Xóa sản phẩm
+    // API: Xóa một sản phẩm theo ID.
     public function api_delete($id)
     {
         $this->setApiHeader();
@@ -90,16 +99,18 @@ class product_list extends controllers
     // PHẦN 2: QUẢN LÝ CHỈNH SỬA SẢN PHẨM & BIẾN THỂ
     // ==========================================
 
-    // Load giao diện rỗng của trang Edit
-    public function sua($id) {
+    // Load giao diện chỉnh sửa sản phẩm theo ID.
+    public function sua($id)
+    {
         $this->view('Master', [
             'Page' => 'product_edit_v',
             'product_id' => $id
         ]);
     }
 
-    // API: Lấy toàn bộ dữ liệu của 1 sản phẩm
-    public function api_get_product_detail($id) {
+    // API: Lấy toàn bộ dữ liệu của một sản phẩm, bao gồm biến thể và danh mục.
+    public function api_get_product_detail($id)
+    {
         $this->setApiHeader();
         
         $product_result = $this->pdlist->products_select($id, '');
@@ -143,8 +154,9 @@ class product_list extends controllers
         exit;
     }
 
-    // API: Cập nhật thông tin cơ bản của Sản phẩm
-    public function api_update_product() {
+    // API: Cập nhật thông tin cơ bản của sản phẩm.
+    public function api_update_product()
+    {
         $this->setApiHeader();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             echo json_encode(['success' => false, 'message' => 'Lỗi phương thức']); exit;
@@ -185,8 +197,9 @@ class product_list extends controllers
         exit;
     }
 
-    // API: Cập nhật thông tin Biến thể
-    public function api_update_variant() {
+    // API: Cập nhật thông tin biến thể của sản phẩm.
+    public function api_update_variant()
+    {
         $this->setApiHeader();
         $variant_id = $_POST['variant_id'] ?? '';
         $color = $_POST['color'] ?? '';
@@ -199,8 +212,9 @@ class product_list extends controllers
         exit;
     }
 
-    // API: Thêm ảnh cho Biến thể
-    public function api_upload_variant_images() {
+    // API: Tải lên và lưu nhiều ảnh cho một biến thể.
+    public function api_upload_variant_images()
+    {
         $this->setApiHeader();
         if (isset($_FILES['detail_images'])) {
             $variant_id = $_POST['variant_id'];
@@ -226,8 +240,9 @@ class product_list extends controllers
         exit;
     }
 
-    // API: Xóa 1 ảnh của Biến thể
-    public function api_delete_variant_image($image_id) {
+    // API: Xóa một ảnh của biến thể khỏi hệ thống.
+    public function api_delete_variant_image($image_id)
+    {
         $this->setApiHeader();
         $result = $this->pdlist->get_images_by_id($image_id);
         if ($result && mysqli_num_rows($result) > 0) {
@@ -243,8 +258,9 @@ class product_list extends controllers
         exit;
     }
 
-    // API: Xóa toàn bộ Biến thể
-    public function api_delete_variant($variant_id) {
+    // API: Xóa toàn bộ biến thể của sản phẩm.
+    public function api_delete_variant($variant_id)
+    {
         $this->setApiHeader();
         $kq = $this->pdlist->variant_delete($variant_id);
         echo json_encode(['success' => $kq, 'message' => $kq ? 'Đã xóa biến thể' : 'Lỗi khi xóa']);
@@ -255,7 +271,7 @@ class product_list extends controllers
     // PHẦN 3: NHẬP & XUẤT EXCEL
     // ==========================================
 
-    // Xuất Excel
+    // Xuất dữ liệu sản phẩm ra file Excel.
     public function export()
     {
         if (!class_exists('PHPExcel')) require_once "./MVC/Bridge.php";
@@ -315,7 +331,7 @@ class product_list extends controllers
         exit;
     }
 
-    // API: Nhập Excel (Sản phẩm & Biến thể)
+    // API: Nhập dữ liệu sản phẩm hoặc biến thể từ file Excel.
     public function api_import_excel()
     {
         $this->setApiHeader();
@@ -440,8 +456,9 @@ class product_list extends controllers
         exit;
     }
 
-    // Tải file mẫu Excel (Giữ nguyên)
-    public function downloadProductTemplate() {
+    // Tải file mẫu Excel để người dùng nhập dữ liệu sản phẩm.
+    public function downloadProductTemplate()
+    {
         if (!class_exists('PHPExcel')) require_once "./MVC/Bridge.php";
         $objExcel = new PHPExcel(); $sheet = $objExcel->getActiveSheet()->setTitle('Products');
         $headerStyle = ['font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']], 'fill' => ['type' => PHPExcel_Style_Fill::FILL_SOLID, 'color' => ['rgb' => '4472C4']]];
@@ -454,7 +471,9 @@ class product_list extends controllers
         $objWriter = PHPExcel_IOFactory::createWriter($objExcel, 'Excel2007'); $objWriter->save('php://output'); exit;
     }
 
-    public function downloadVariantTemplate() {
+    // Tải file mẫu Excel để người dùng nhập dữ liệu biến thể.
+    public function downloadVariantTemplate()
+    {
         if (!class_exists('PHPExcel')) require_once "./MVC/Bridge.php";
         $objExcel = new PHPExcel(); $sheet = $objExcel->getActiveSheet()->setTitle('Variants');
         $headerStyle = ['font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']], 'fill' => ['type' => PHPExcel_Style_Fill::FILL_SOLID, 'color' => ['rgb' => '70AD47']]];
